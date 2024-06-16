@@ -18,21 +18,26 @@
             </div>
             <div class="col-sm-6">
                 <p class="fw-medium" style="font-size: 20px;">Menu Yang Dipilih :</p>
-                <div class="container mx-0 px-0" >
+                <div class="container mx-0 px-0">
+                    @foreach ($keranjangs as $item)
                     <div class="card mb-3 rounded-0">
                         <div class="row g-0">
                             <div class="col-md-6 p-3">
-                            <img src="{{ asset('assets/img/'.$menu->gambar) }}" class="img-fluid" alt="...">
+                                <img src="{{ asset('assets/img/'.$item->menu->gambar) }}" class="img-fluid" alt="...">
                             </div>
                             <div class="col-md-6 p-3">
-                            <div class="card-body p-0">
-                                <p class="m-0 fw-bold">{{$menu->nama_kue}}</p>
-                                <p class="m-0">{{$menu->deskripsi}}</p>
-                                <p class="mt-md-4 mb-md-0 fw-bold text-end">{{ 'Rp '. number_format($menu->harga, 0, ',', '.') }}</p>
-                            </div>
+                                <div class="card-body p-0">
+                                    <p class="m-0 fw-bold">{{ $item->menu->nama_kue }}</p>
+                                    <p class="m-0">{{ $item->menu->deskripsi }}</p>
+                                    <p class="m-0">Jumlah: {{ $quantities[$item->id] }}</p>
+                                    <p class="mt-md-4 mb-md-0 fw-bold text-end">{{ 'Rp '. number_format($item->menu->harga, 0, ',', '.') }}</p>
+                                    <input type="hidden" name="selected_items[]" value="{{ $item->id }}">
+                                    <input type="hidden" name="quantities[{{ $item->id }}]" value="{{ $quantities[$item->id] }}">
+                                </div>
                             </div>
                         </div>
                     </div>
+                    @endforeach
                 </div>
             </div>
         </div>
@@ -40,10 +45,29 @@
 </div>
 <hr class="container mx-auto">
 <div class="container scrollspy-example" data-bs-spy="scroll" data-bs-target="#simple-list-example" data-bs-offset="0" data-bs-smooth-scroll="true" tabindex="0">
-    <form action="/beli_sekarang"  method="post">
+    <form action="/tambah_pemesanan" method="post">
         @csrf
-            <input type="text" class="form-control" id="user_id" name="user_id" value="{{ auth()->user()->id }}" hidden >
-            <input type="text" class="form-control" id="menu_id" name="menu_id" value="{{$menu->id}}" hidden>
+        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+
+        @foreach ($keranjangs as $item)
+            <input type="hidden" name="selected_items[]" value="{{ $item->id }}">
+            <input type="hidden" name="quantities[{{ $item->id }}]" value="{{ $quantities[$item->id] }}">
+            <div class="card mb-3 rounded-0" hidden>
+                <div class="row g-0">
+                    <div class="col-md-6 p-3">
+                        <img src="{{ asset('assets/img/' . $item->menu->gambar) }}" class="img-fluid" alt="...">
+                    </div>
+                    <div class="col-md-6 p-3">
+                        <div class="card-body p-0">
+                            <p class="m-0 fw-bold">{{ $item->menu->nama_kue }}</p>
+                            <p class="m-0">{{ $item->menu->deskripsi }}</p>
+                            <p class="mt-md-4 mb-md-0 fw-bold text-end">{{ 'Rp ' . number_format($item->menu->harga, 0, ',', '.') }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        @endforeach
+
         <div class="row mb-3">
             <label for="tanggal_ambil" class="col-lg-2 col-form-label">Tanggal Ambil</label>
             <div class="col-lg-4">
@@ -54,20 +78,6 @@
             <label for="jam_ambil" class="col-lg-2 col-form-label">Jam Ambil</label>
             <div class="col-lg-4">
                 <input type="time" class="form-control" id="jam_ambil" name="jam_ambil" required>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="qty" class="col-lg-2 col-form-label">Jumlah</label>
-            <div class="col-lg-4">
-                <input type="number" class="form-control" id="qty" name="qty" aria-describedby="qty" value="{{$menu->qty}}" min="{{$menu->qty}}" step="1" oninput="validateLamaSewa(this)" required>
-            <div id="qty" class="form-text">{{$menu->qty}}</div>
-            </div>
-        </div>
-        <div class="row mb-3">
-            <label for="total_harga" class="col-lg-2 col-form-label">Harga</label>
-            <div class="col-lg-4">
-                <input type="hidden" id="harga" value="{{$menu->harga}}">
-                <input type="text" name="total_harga" id="total_harga" class="form-control" readonly>
             </div>
         </div>
         <div class="row mb-3">
@@ -88,7 +98,7 @@
             </div>
         </div>
         <button type="submit" class="btn btn-success py-2" onclick="return confirm('Apakah benar dengan reservasi Anda?')">Kirim</button>
-        <a href="/menu" class="btn btn-secondary py-2">Batal</a>
+        <a href="/keranjang" class="btn btn-secondary py-2">Batal</a>
     </form>
 </div>
 

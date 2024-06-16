@@ -2,30 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Menu;
-use App\Models\User;
 use App\Models\Keranjang;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
 class KeranjangController extends Controller
 {
-    public function keranjang($id) {
+    public function keranjang() {
         return view('keranjang', [
             'title' => 'Keranjang',
-            'keranjang' => Menu::find($id),
+            'keranjang' => Keranjang::all(),
         ]);
     }
 
     public function tambah_keranjang(Request $request)
     {
-        // dd($request->all());
-        $keranjang=new Keranjang;
-        $keranjang->user_id=$request->user_id;
-        $keranjang->menu_id=$request->menu_id;
+        $data = $request->except(['token', 'submit']);
+        $keranjang = Keranjang::create($data);
 
         $keranjang->save();
 
-        return redirect('/keranjang')->with("tambah_keranjang", "Pesanan berhasil Ditambah. Silakan lakukan pembayaran sebelum 24 jam!");
+        return redirect('/keranjang')->with("tambah_keranjang", "Keranjang berhasil Ditambah!");
+    }
+
+    public function delete_keranjang($id)
+    {
+        Keranjang::find($id)->delete();
+        return redirect()->back()->with("delete_keranjang","Keranjang Berhasil di Hapus");
     }
 }

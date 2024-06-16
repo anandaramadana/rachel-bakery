@@ -1,100 +1,99 @@
 @extends('layouts.app')
 @section('content')
-<!-- <div class="container">
-    <h4 class="fw-bold mb-4 mt-5">Keranjang</h4>
-    <div class="card mb-3">
-        <div class="row no-gutters ms-3">
-            <div class="col-md-3 p-3">
-                <img src="{{ asset('assets/img/cake-carousel.jpg') }}" class="card-img" alt="Chocolate Cake">
-            </div>
-            <div class="col-md-8">
-                <div class="card-body">
-                    <h5 class="card-title">Nama Kue: Chocolate Cake</h5>
-                    <p class="card-text">Harga: Rp. 50.000</p>
-                    <div class="d-flex align-items-center">
-                        <button class="btn btn-secondary btn-sm mr-2" onclick="decreaseQuantity('chocolate-cake', 50000)">-</button>
-                        <input type="text" class="form-control form-control-sm text-center" id="chocolate-cake-quantity" value="1" style="width: 50px;" readonly>
-                        <button class="btn btn-secondary btn-sm ml-2" onclick="increaseQuantity('chocolate-cake', 50000)">+</button>
-                    </div>
-                </div>
-            </div>
+<div class="container mx-auto mt-2 py-1">
+    <div class="card-header py-1 mt-5">
+        @if (session()->has('tambah_keranjang'))
+        <div class="alert alert-info alert-dismissible" role="alert">
+            {{ session('tambah_keranjang') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
+        @endif
+        @if (session()->has('delete_keranjang'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('delete_keranjang') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        @endif
     </div>
 
-    <div class="mt-4">
-        <h4>Total Harga: Rp. <span id="total-price">150000</span></h4>
-    </div>
-</div> -->
-
-<div class="container mx-auto mt-3 py-1">
-    <h4 class="fw-bold mb-4 mt-5">Keranjang</h4>
-    <div class="container p-0">
-        @foreach ($keranjang as $item)
-            <div class="card mb-3 rounded-0">
-                <div class="row g-0">
-                    <div class="gambar-keranjang col-md-5 p-3">
-                        <img src="{{ asset('assets/img/'. $item->gambar) }}" class="img-fluid" alt="...">
-                    </div>
-                    <div class="col-md-5 p-3">
-                        <div class="card-body px-0 d-flex flex-column justify-content-end">
-                            <div class="row g-0">
-                                <p class="mb-0 col-4" style="font-size: 18px;">Nama Kue</p>
-                                <p class="mb-0 col-1" style="font-size: 18px;">:</p>
-                                <p class="mb-0 col-7" style="font-size: 18px;">{{$item->nama_kue}}</p>
+    <h4 class="fw-bold mb-4 mt-4">Keranjang</h4>
+    <form action="/checkout" method="post">
+        @csrf
+        <input type="hidden" name="user_id" value="{{ auth()->user()->id }}">
+        <div class="container p-0">
+            @foreach ($keranjang as $item)
+                <div class="card mb-3 rounded-0 bg-light">
+                    <div class="row g-0">
+                        <div class="d-flex gambar-keranjang col-md-5 p-3 gap-2">
+                            <img src="{{ asset('assets/img/' . $item->menu->gambar) }}" class="img-fluid" alt="{{ $item->menu->nama_kue }}">
+                            <div class="form-check" style="margin-top: 110px; margin-left: 5px;">
+                                <input class="form-check-input bg-dark" type="checkbox" value="{{ $item->id }}" name="selected_items[]"> Pilih
                             </div>
-                            <div class="row g-0">
-                                <p class="mb-0 col-4" style="font-size: 18px;">Harga</p>
-                                <p class="mb-0 col-1" style="font-size: 18px;">:</p>
-                                <!-- <p class="mb-0 col-7" style="font-size: 18px;">{{ 'Rp '. number_format($item->harga, 0, ',', '.') }}</p> -->
-                                <p class="mb-0 col-7" style="font-size: 18px;">Rp <span id="item-price-{{$item->id}}">{{ number_format($item->harga, 0, ',', '.') }}</span></p>
-                            </div>
-                            <div class="d-flex align-items-center mt-3">
-                                <button class="btn btn-secondary btn-sm mr-2" onclick="updateQuantity('{{$item->id}}', -1, '{{$item->harga}}')">-</button>
-                            <input type="text" class="form-control form-control-sm text-center" id="quantity-{{$item->id}}" value="1" style="width: 50px;" readonly>
-                                <button class="btn btn-secondary btn-sm ml-2" onclick="updateQuantity('{{$item->id}}', 1, '{{$item->harga}}')">+</button>
+                        </div>
+                        <div class="col-md-6 p-3">
+                            <div class="card-body px-0 d-flex flex-column">
+                                <div class="row g-0">
+                                    <p class="mb-0 col-4" style="font-size: 18px;">Nama Kue</p>
+                                    <p class="mb-0 col-1" style="font-size: 18px;">:</p>
+                                    <p class="mb-0 col-3" style="font-size: 18px;">{{ $item->menu->nama_kue }}</p>
+                                </div>
+                                <div class="row g-0">
+                                    <p class="mb-0 col-4" style="font-size: 18px;">Harga</p>
+                                    <p class="mb-0 col-1" style="font-size: 18px;">:</p>
+                                    <p class="mb-0 col-7" style="font-size: 18px;">Rp <span id="item-price-{{ $item->id }}">{{ number_format($item->menu->harga, 0, ',', '.') }}</span></p>
+                                </div>
+                                <div class="row g-0">
+                                    <p class="mb-0 col-4" style="font-size: 18px;">Jumlah</p>
+                                    <p class="mb-0 col-1" style="font-size: 18px;">:</p>
+                                    <p class="mb-0 col-2">
+                                        <input type="number" name="quantities[{{ $item->id }}]" value="1" min="1" class="form-control" id="quantity-{{ $item->id }}" onchange="updateTotalPrice()">
+                                    </p>
+                                </div>
+                                <div class="d-flex align-items-center mt-5 justify-content-end">
+                                    <a type="button" class="btn btn-danger text-white ms-3" href="/keranjang/{{ $item->id }}/delete" onclick="return confirm('Apakah yakin ingin menghapus?')" title="Hapus Keranjang">
+                                        <i class="fas fa-fw fa-trash"></i> Hapus
+                                    </a>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
+            @endforeach
+            <div class="mt-4 text-end">
+                <h4>Total Harga: Rp. <span id="total-price">0</span></h4>
             </div>
-        @endforeach
-        <div class="mt-4 text-end">
-            <h4>Total Harga: Rp. <span id="total-price">0</span></h4>
+            <div class="d-flex justify-content-end gap-2">
+                <button type="submit" class="btn btn-warning p-2 text-white">Checkout</button>
+                <a type="button" class="btn btn-secondary p-2" href="/menu">Kembali</a>
+            </div>
         </div>
-    </div>
+    </form>
 </div>
 
 <script>
-    const cartItems = <?php echo json_encode($keranjang) ?>
-
-    function updateQuantity(id, change, price) {
-        let quantityInput = document.getElementById('quantity-' + id);
-        let currentQuantity = parseInt(quantityInput.value);
-
-        if (currentQuantity + change >= 1) {
-            quantityInput.value = currentQuantity + change;
-
-            // Update the item price
-            let newPrice = (currentQuantity + change) * price;
-            document.getElementById('item-price-' + id).innerText = newPrice.toLocaleString('id-ID');
-
-            updateTotalPrice();
+    document.addEventListener('DOMContentLoaded', function() {
+        function updateTotalPrice() {
+            let totalPrice = 0;
+            document.querySelectorAll('input[name^="selected_items"]:checked').forEach((checkbox) => {
+                const itemId = checkbox.value;
+                const quantity = document.getElementById(`quantity-${itemId}`).value;
+                const price = parseFloat(document.getElementById(`item-price-${itemId}`).textContent.replace(/\./g, '').replace(',', '.'));
+                totalPrice += quantity * price;
+            });
+            document.getElementById('total-price').textContent = totalPrice.toLocaleString('id-ID');
         }
-    }
 
-    function updateTotalPrice() {
-        let totalPrice = 0;
-
-        cartItems.forEach(item => {
-            let quantity = parseInt(document.getElementById('quantity-' + item.id).value);
-            totalPrice += quantity * item.harga;
+        document.querySelectorAll('input[name^="selected_items"]').forEach((checkbox) => {
+            checkbox.addEventListener('change', updateTotalPrice);
         });
 
-        document.getElementById('total-price').innerText = totalPrice.toLocaleString('id-ID');
-    }
+        document.querySelectorAll('input[name^="quantities"]').forEach((input) => {
+            input.addEventListener('input', updateTotalPrice);
+        });
 
-    document.addEventListener('DOMContentLoaded', (event) => {
         updateTotalPrice();
     });
 </script>
+
+
 @endsection

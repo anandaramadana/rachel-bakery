@@ -1,31 +1,31 @@
 @extends('layouts.app')
 @section('content')
-@if (session()->has('tambah_pemesanan'))
-    <div class="alert alert-info alert-dismissible fade show mt-5" role="alert">
-        {{ session('tambah_pemesanan') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-@if (session()->has('delete_pemesanan'))
-    <div class="alert alert-danger alert-dismissible fade show mt-5" role="alert">
-        {{ session('delete_pemesanan') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-@if (session()->has('tambah_bukti'))
-    <div class="alert alert-info alert-dismissible fade show" role="alert">
-        {{ session('tambah_bukti') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
-@if (session()->has('tenggat'))
-    <div class="alert alert-danger alert-dismissible fade show" role="alert">
-        {{ session('tenggat') }}
-        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-    </div>
-@endif
 
 <section class="container-fluid" style="margin-bottom: 400px">
+    @if (session()->has('tambah_pemesanan'))
+        <div class="alert alert-info alert-dismissible fade show mt-5" role="alert">
+            {{ session('tambah_pemesanan') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if (session()->has('delete_pemesanan'))
+        <div class="alert alert-danger alert-dismissible fade show mt-5" role="alert">
+            {{ session('delete_pemesanan') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if (session()->has('tambah_bukti'))
+        <div class="alert alert-info alert-dismissible fade show mt-5" role="alert">
+            {{ session('tambah_bukti') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
+    @if (session()->has('tenggat'))
+        <div class="alert alert-danger alert-dismissible fade show mt-5" role="alert">
+            {{ session('tenggat') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    @endif
     <h5 class="fw-bold p-3 ms-5 mt-5">Riwayat Pesanan</h5>
     <div class="container ms-8">
         <div class="table-responsive-xxl">
@@ -95,11 +95,13 @@
                                         <p class="mb-0 col-5"><span class="badge text-bg-info fs-6">{{ $item->status }}</span></p>
                                     @endif
                                     @if (!$item->bukti_pembayaran)
-                                    <div class="waktu-pemesanan" data-waktu-pemesanan="{{ $item->created_at }}" data-waktu-expired="{{ $item->waktu_expired }}">
-                                        {{ $item->waktu_expired ? now()->diffInHours($item->waktu_expired).' jam' : 'Belum ada durasi'}}
-                                    </div>
+                                        @if ($item->pembayaran->nama_metode !== 'Bayar Langsung' or $item->status !== 'Lunas')
+                                            <div class="waktu-pemesanan" data-waktu-pemesanan="{{ $item->created_at }}" data-waktu-expired="{{ $item->waktu_expired }}">
+                                                {{ $item->waktu_expired ? now()->diffInHours($item->waktu_expired).' jam' : 'Belum ada durasi'}}
+                                            </div>
+                                        @endif
                                     @elseif ($item->status == 'Menunggu Konfirmasi')
-                                    <p class="mb-0 col-5"><span class="badge text-bg-warning fs-6">{{ $item->status }}</span></p>
+                                        <p class="mb-0 col-5"><span class="badge text-bg-warning fs-6">{{ $item->status }}</span></p>
                                     @endif
                                 </td>
                                 <td>
@@ -116,11 +118,13 @@
                                                 <path d="M0 8s3-5.5 8-5.5S16 8 16 8s-3 5.5-8 5.5S0 8 0 8m8 3.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7"/>
                                             </svg>
                                         </a>
-                                        <a type="button" class="btn btn-danger mb-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Batal pesan" href="/riwayat/{{ $item->id }}/delete" onclick="return confirm('Apakah yakin menghapus reservasi Anda?')" title="Hapus Pesanan">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
-                                                <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
-                                            </svg>
-                                        </a>
+                                        @if ($item->status !== 'Lunas')
+                                            <a type="button" class="btn btn-danger mb-1" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Batal pesan" href="/riwayat/{{ $item->id }}/delete" onclick="return confirm('Apakah yakin menghapus reservasi Anda?')" title="Hapus Pesanan">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" class="bi bi-trash-fill" viewBox="0 0 16 16">
+                                                    <path d="M2.5 1a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1H3v9a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V4h.5a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H10a1 1 0 0 0-1-1H7a1 1 0 0 0-1 1zm3 4a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 .5-.5M8 5a.5.5 0 0 1 .5.5v7a.5.5 0 0 1-1 0v-7A.5.5 0 0 1 8 5m3 .5v7a.5.5 0 0 1-1 0v-7a.5.5 0 0 1 1 0"/>
+                                                </svg>
+                                            </a>
+                                        @endif
                                         @if ($item->pembayaran->nama_metode !== 'Bayar Langsung')
                                             @if (!$item->bukti_pembayaran)
                                             <button type="button" class="btn btn-success mb-1" data-bs-placement="top" data-bs-title="Upload bukti bayar" data-bs-toggle="modal" data-bs-target="#image-bukti-{{ $item->id }}" title="Upload Bukti Pembayaran">

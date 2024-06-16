@@ -30,7 +30,14 @@
                             @if (Auth::check() && Auth::user()->role == 'customer')
                                 <div class="d-flex justify-content-end gap-2">
                                     <a type="button" class="btn btn-warning p-2 text-white" href="/pemesanan/{{ $detail->id }}">Pesan Sekarang</a>
-                                    <a type="button" class="btn btn-info p-2 text-white" href="/keranjang">Tambah Keranjang</a>
+                                    <form action="{{ route('tambah_keranjang') }}" method="POST">
+                                        @csrf
+                                        <input type="hidden" name="user_id" value="{{ Auth::id() }}">
+                                        <input type="hidden" name="menu_id" value="{{ $detail->id }}">
+                                        <button type="submit" class="btn btn-info text-white">
+                                            Tambah Keranjang
+                                        </button>
+                                    </form>
                                     <a type="button" class="btn btn-secondary p-2" href="/menu">Kembali</a>
                                 </div>
                             @else

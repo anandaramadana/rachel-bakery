@@ -15,9 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('menu_id')->constrained('menus')->nullable();
-            // $table->foreign('menu_id')->references('id')->on('menus')->onDelete('cascade');
-            // $table->foreignId('keranjang_id')->constrained('keranjangs')->nullable();
-            // $table->foreign('keranjang_id')->references('id')->on('keranjangs')->onDelete('cascade');
             $table->foreignId('pembayaran_id')->constrained('pembayarans');
             $table->timestamp('waktu_expired')->nullable();
             $table->date('tanggal_ambil');

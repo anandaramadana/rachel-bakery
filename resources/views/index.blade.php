@@ -26,17 +26,11 @@
                         <img src="{{ asset('assets/img/'. $item->gambar) }}" class="d-block w-100" alt="...">
                     </div>
                 @endforeach
-                    <div class="carousel-text">
-                        <p class="section-subheader fw-bold text-center">PENYEDIA</p>
-                        <h1 class="text-center">Kue Rumahan<br /> Terbaik</h1>
-                        <button class="carousel-btn"><a href="/menu">Pesan Sekarang</a></button>
-                    </div>
-                <!-- <div class="carousel-item">
-                    <img src="{{ asset('assets/img/cake-carousel.jpg') }}" class="d-block w-100" alt="...">
+                <div class="carousel-text">
+                    <p class="section-subheader fw-bold text-center">PENYEDIA</p>
+                    <h1 class="text-center">Kue Rumahan<br /> Terbaik</h1>
+                    <button class="carousel-btn"><a href="/menu">Pesan Sekarang</a></button>
                 </div>
-                <div class="carousel-item">
-                    <img src="{{ asset('assets/img/carousel-kue.jpeg') }}" class="d-block w-100" alt="...">
-                </div> -->
             </div>
             <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleAutoplaying" data-bs-slide="prev">
                 <span class="carousel-control-prev-icon" aria-hidden="true"></span>

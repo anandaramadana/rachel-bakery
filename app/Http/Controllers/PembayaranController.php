@@ -9,6 +9,13 @@ use App\Http\Controllers\Controller;
 
 class PembayaranController extends Controller
 {
+    public function hal_depan() {
+        return view('informasi-pembayaran', [
+            'title' => 'Pembayaran',
+            'pembayaran' => Pembayaran::all(),
+        ]);
+    }
+
     public function index() {
         return view('admin/pembayaran', [
             'title' => 'Pembayaran',

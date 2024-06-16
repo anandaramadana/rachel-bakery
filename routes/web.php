@@ -28,16 +28,8 @@ Route::get('/informasi-order', function () {
     return view('informasi-order');
 });
 
-Route::get('/informasi-pembayaran', function () {
-    return view('informasi-pembayaran');
-});
-
 Route::get('/layanan', function () {
     return view('layanan');
-});
-
-Route::get('/keranjang', function () {
-    return view('keranjang');
 });
 
 Route::get('/pemesanan', function () {
@@ -51,14 +43,18 @@ Route::group(['middleware' => ['auth', 'CekRole:customer']], function () {
 
     Route::get('/pemesanan/{id}', [PemesananController::class, 'hal_pesan'])->name('hal_pesan');
     Route::post('/tambah_pemesanan', [PemesananController::class, 'tambah_pemesanan'])->name('tambah_pemesanan');
+    Route::post('/beli_sekarang', [PemesananController::class, 'beli_sekarang'])->name('beli_sekarang');
+    Route::post('/checkout', [PemesananController::class, 'checkout'])->name('checkout');
     Route::get('/riwayat', [PemesananController::class,'riwayat'])->name('riwayat');
     Route::get('/riwayat/{id}/delete', [PemesananController::class,'delete_pemesanan'])->name('delete_pemesanan');
     Route::post('/bukti/{id}', [PemesananController::class, 'bukti'])->name('bukti');
     Route::get('/invoice/{id}', [PemesananController::class, 'invoice'])->name('invoice');
     Route::get('/cetak_bukti/{id}', [PemesananController::class, 'cetak_butki'])->name('cetak_butki');
 
-    Route::get('/keranjang/{id}', [KeranjangController::class, 'keranjang'])->name('keranjang');
+    Route::get('/keranjang', [KeranjangController::class, 'keranjang'])->name('keranjang');
     Route::post('/tambah_keranjang', [KeranjangController::class, 'tambah_keranjang'])->name('tambah_keranjang');
+    Route::get('/keranjang/{id}/delete', [KeranjangController::class,'delete_keranjang'])->name('delete_keranjang');
+
 });
 
 Route::group(['middleware' => ['auth', 'CekRole:admin']], function () {
@@ -119,6 +115,5 @@ Route::get('/logout', [UserController::class, 'logout'])->name('logout');
 //* Halaman Depan Guest *//
 Route::get('/', [KategoriController::class, 'index'])->name('index');
 Route::get('/menu', [MenuController::class, 'index'])->name('index');
-
-//* Halaman Depan Guest *//
 Route::get('/menu-detail/{id}', [MenuController::class, 'detail_menu'])->name('detail_menu');
+Route::get('/informasi-pembayaran', [PembayaranController::class, 'hal_depan'])->name('informasi-pembayaran');

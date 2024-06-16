@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users');
             $table->foreignId('menu_id')->constrained('menus');
-            $table->string('harga');
             $table->timestamps();
         });
     }
